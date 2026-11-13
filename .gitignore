@@ -1,0 +1,16 @@
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+build/
+dist/
+*.log
+*.har
+config.json
+.env
+.env.*
+# Local development records contain machine-specific paths.
+PHASE*_REPORT.md
+PROJECT_STATE.md
+# Distribute binary archives as release assets.
+release/*.zip
