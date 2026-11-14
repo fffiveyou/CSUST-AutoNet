@@ -52,9 +52,17 @@ py -3.12 -m venv .venv
 .\.venv\Scripts\python.exe -m PyInstaller build.spec
 ```
 
+若默认 pytest 临时目录因切换 Windows 用户或运行环境而出现权限错误，可指定新的独立临时目录（每次使用不同名称）：
+
+```powershell
+.\.venv\Scripts\python.exe -m pytest -q -p no:cacheprovider --basetemp "$env:TEMP\csust-tests-$([guid]::NewGuid().ToString('N'))"
+```
+
 ## 验证状态与限制
 
-源码版曾在 Windows 10 x64、CSUST-Student、Clash for Windows 上实测通过。便携版通过程序入口与 Windows 凭据后端自检，完整用户验收尚未记录。历史测试运行在退出阶段出现挂起，因此不将进度条 100% 作为测试进程正常退出的证明。
+源码版曾在 Windows 10 x64、CSUST-Student、Clash for Windows 上实测通过。已发布的 v0.1.0 便携版通过程序入口与 Windows 凭据后端自检，完整用户验收尚未记录。
+
+后续源码增加了后台任务安全退出、认证会话清理和长期运行内存限制。历史测试退出挂起在本轮独立临时目录中未复现；离线回归通过并确认进程退出码为 0，包括检测/认证进行中退出和任务异常场景。测试不访问真实校园网、不提交真实凭据、不修改系统代理。上述源码修复尚未包含在 v0.1.0 下载包中，仍需新版便携包与真实网络验收。
 
 其他代理软件为待支持占位项。校园网接口可能变化，当前认证入口使用 HTTPS 802 端口。发布包未签名。本项目非学校官方软件，仅用于本人有权使用的校园网账号。
 

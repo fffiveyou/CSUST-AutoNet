@@ -63,13 +63,17 @@ class AuthenticationStateMachine:
         self._history.append(state)
 
     def _result(self, message: str, start_index: int) -> StateMachineResult:
-        return StateMachineResult(
+        result = StateMachineResult(
             self.state,
             self.failure_count,
             self.automatic_authentication_paused,
             message,
             tuple(self._history[start_index:]),
         )
+        # Results own their transitions; monitoring need not retain a lifetime
+        # history in memory during weeks of background operation.
+        self._history = [self.state]
+        return result
 
     def observe_detection(
         self,

@@ -201,7 +201,8 @@ class CsustAuthenticator:
     ) -> None:
         self._credential_provider = credential_provider
         self._environment_provider = environment_provider
-        self._session = session or create_direct_session()
+        self._owns_session = session is None
+        self._session = session if session is not None else create_direct_session()
         self._session.trust_env = False
         self._session.proxies.clear()
         self._verifier = verifier
@@ -269,6 +270,11 @@ class CsustAuthenticator:
             # exception text, so nothing from this boundary is propagated.
             self.last_outcome = "TRANSPORT_ERROR"
             return False
+
+    def close(self) -> None:
+        self._credential_provider = lambda: ("", "")
+        if self._owns_session:
+            self._session.close()
 
     def verify_login(self) -> bool:
         try:

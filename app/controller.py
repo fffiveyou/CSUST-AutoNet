@@ -119,6 +119,8 @@ class AppController:
         return path
 
     def check_network(self) -> DetectionResult:
+        # A failed/in-progress check must not leave old portal evidence usable.
+        self.invalidate_detection()
         wifi_result = self.wifi_connector.ensure_connected(
             str(self.config.get("wifi_profile", "CSUST-Student")),
             enabled=bool(self.config.get("wifi_auto_connect", True)),
@@ -179,6 +181,10 @@ class AppController:
                 result.portal_url,
             )
         return result
+
+    def invalidate_detection(self) -> None:
+        self._last_detection = None
+        self._last_detection_at = None
 
     def process_detection(self, detection: DetectionResult) -> StateMachineResult:
         """Remember the latest evidence and update state without auto-login."""
@@ -266,6 +272,7 @@ class AppController:
         if not password:
             return self._manual_result("尚未在 Windows 凭据管理器中保存密码；未提交认证。")
 
+        authenticator = None
         try:
             proxy_adapter = self.real_proxy_adapter_factory(
                 proxy_type,
@@ -328,6 +335,12 @@ class AppController:
             result = self._manual_result("认证准备失败；未确认有凭据提交。")
         finally:
             password = ""
+            close = getattr(authenticator, "close", None)
+            if close is not None:
+                try:
+                    close()
+                except Exception:
+                    self.logger.warning("Authentication session cleanup failed")
 
         self.logger.info(
             "Manual authentication state: %s; auth failures: %s",

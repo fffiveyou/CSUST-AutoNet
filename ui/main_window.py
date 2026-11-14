@@ -88,6 +88,10 @@ class MainWindow(QMainWindow):
         super().__init__()
         self.controller = controller
         self._allow_real_close = False
+        self._closing = False
+        self._shutdown_timer = QTimer(self)
+        self._shutdown_timer.setInterval(50)
+        self._shutdown_timer.timeout.connect(self._finish_shutdown)
         self._tray_hint_shown = False
         self._network_check_running = False
         self._active_check_manual = False
@@ -213,6 +217,7 @@ class MainWindow(QMainWindow):
         log_layout.addLayout(log_buttons)
         self.recent_events = QTextEdit()
         self.recent_events.setReadOnly(True)
+        self.recent_events.document().setMaximumBlockCount(500)
         self.recent_events.setMaximumHeight(100)
         self.recent_events.setPlainText("应用已启动。当前不执行网络检测、认证或系统代理写入。")
         log_layout.addWidget(QLabel("最近事件："))
@@ -397,6 +402,8 @@ class MainWindow(QMainWindow):
             self.monitor_label.setText(f"● 运行中（每 {interval_seconds} 秒，无代理直连）")
 
     def _schedule_network_check(self, *, manual: bool) -> None:
+        if self._closing:
+            return
         if self._authentication_running:
             if manual:
                 self._event("手动认证正在进行，请等待系统代理恢复。")
@@ -416,6 +423,8 @@ class MainWindow(QMainWindow):
 
     @Slot(object)
     def _network_check_completed(self, result: DetectionResult) -> None:
+        if self._closing:
+            return
         check_was_manual = self._active_check_manual
         self._network_check_running = False
         self._active_check_manual = False
@@ -443,6 +452,9 @@ class MainWindow(QMainWindow):
 
     @Slot(str)
     def _network_check_failed(self, message: str) -> None:
+        if self._closing:
+            return
+        self.controller.invalidate_detection()
         self._network_check_running = False
         self._active_check_manual = False
         self.detect_button.setEnabled(True)
@@ -467,6 +479,8 @@ class MainWindow(QMainWindow):
         self._start_authentication(automatic=False)
 
     def _start_authentication(self, *, automatic: bool) -> None:
+        if self._closing:
+            return
         if self._authentication_running:
             if not automatic:
                 self._event("认证正在进行，请勿重复提交。")
@@ -510,6 +524,8 @@ class MainWindow(QMainWindow):
 
     @Slot(object)
     def _authentication_completed(self, result: StateMachineResult) -> None:
+        if self._closing:
+            return
         self._finish_authentication_worker()
         self._apply_state_machine_result(result, from_authentication=True)
         self._event(result.message)
@@ -517,6 +533,8 @@ class MainWindow(QMainWindow):
 
     @Slot(str)
     def _authentication_failed(self, message: str) -> None:
+        if self._closing:
+            return
         self._finish_authentication_worker()
         self.status_label.setText("● 认证执行异常")
         self._event(message)
@@ -584,16 +602,6 @@ class MainWindow(QMainWindow):
             self.show_normal()
 
     def closeEvent(self, event: QCloseEvent) -> None:
-        if self._authentication_running:
-            event.ignore()
-            self._event("认证进行中；必须等待系统代理恢复后才能退出。")
-            self.tray.showMessage(
-                APP_NAME,
-                "认证进行中，请等待系统代理恢复后再退出。",
-                QSystemTrayIcon.MessageIcon.Warning,
-                3000,
-            )
-            return
         if not self._allow_real_close and self.minimize_check.isChecked():
             event.ignore()
             self.hide()
@@ -602,19 +610,29 @@ class MainWindow(QMainWindow):
                 self._tray_hint_shown = True
             return
         self._allow_real_close = True
+        if self._thread_pool.activeThreadCount():
+            event.ignore()
+            if not self._closing:
+                self._closing = True
+                self._monitor_timer.stop()
+                self.centralWidget().setEnabled(False)
+                self.tray.contextMenu().setEnabled(False)
+                self._event("正在退出：等待后台任务结束及系统代理恢复，请稍候。")
+                self._shutdown_timer.start()
+            return
+        self._closing = True
         self._monitor_timer.stop()
-        self._thread_pool.clear()
-        self._thread_pool.waitForDone(16000)
+        self._shutdown_timer.stop()
         self.tray.hide()
         event.accept()
         QApplication.quit()
 
+    def _finish_shutdown(self) -> None:
+        # Keep Qt's event loop alive while workers finish, including proxy
+        # restoration in authentication_bypass. Never destroy a live pool.
+        if not self._thread_pool.activeThreadCount():
+            self.close()
+
     def quit_application(self) -> None:
-        if self._authentication_running:
-            self._event("认证进行中；必须等待系统代理恢复后才能退出。")
-            return
         self._allow_real_close = True
-        self._monitor_timer.stop()
-        self.tray.hide()
         self.close()
-        QApplication.quit()
