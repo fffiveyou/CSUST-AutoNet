@@ -1,9 +1,9 @@
-"""FlClash placeholder; intentionally unsupported in Phase 2."""
+"""FlClash Windows system-proxy integration; no process or TUN control."""
 
-from proxy.base import UnsupportedProxyAdapter
+from proxy.windows_system import WindowsSystemProxyAdapter
 
 
-class FlClashAdapter(UnsupportedProxyAdapter):
-    def __init__(self) -> None:
-        super().__init__("FlClash")
+class FlClashAdapter(WindowsSystemProxyAdapter):
+    PROCESS_NAMES = frozenset(["FlClash.exe"])
+    INSTALL_DIRECTORIES = ["FlClash"]
 

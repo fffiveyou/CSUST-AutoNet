@@ -1,9 +1,9 @@
-"""GUI.for.SingBox placeholder; intentionally unsupported in Phase 2."""
+"""GUI.for.SingBox Windows system-proxy integration; no process or TUN control."""
 
-from proxy.base import UnsupportedProxyAdapter
+from proxy.windows_system import WindowsSystemProxyAdapter
 
 
-class GuiForSingBoxAdapter(UnsupportedProxyAdapter):
-    def __init__(self) -> None:
-        super().__init__("GUI.for.SingBox")
+class GuiForSingBoxAdapter(WindowsSystemProxyAdapter):
+    PROCESS_NAMES = frozenset(["GUI.for.SingBox.exe"])
+    INSTALL_DIRECTORIES = ["GUI.for.SingBox"]
 

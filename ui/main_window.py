@@ -352,6 +352,7 @@ class MainWindow(QMainWindow):
         elif data["key"] == "none":
             message = "当前选择不处理代理软件。"
         else:
+            client_name = self.proxy_combo.currentText()
             adapter = create_proxy_adapter(
                 data["key"],
                 exe_path=self.proxy_path_edit.text(),
@@ -364,11 +365,11 @@ class MainWindow(QMainWindow):
                 self.proxy_path_edit.setText(str(executable))
             if app_running:
                 state_text = "开启" if proxy_active else "关闭"
-                message = f"Clash 正在运行；Windows 系统代理当前{state_text}。仅只读检测。"
+                message = f"{client_name} 正在运行；Windows 系统代理当前{state_text}。仅只读检测。"
             elif executable is not None:
-                message = "已找到 Clash 程序；应用当前未运行。仅只读检测。"
+                message = f"已找到 {client_name} 程序；应用当前未运行。仅只读检测。"
             else:
-                message = "未自动找到代理程序，请手工选择 EXE。"
+                message = "未自动找到代理程序，可手工选择 EXE；系统代理管理不依赖程序路径。"
         self.proxy_notice.setText(message)
         self._refresh_system_proxy_status()
         self._event(message)
@@ -380,7 +381,7 @@ class MainWindow(QMainWindow):
             self.proxy_notice.setText("可用：不执行任何代理软件操作。")
         elif data["supported"]:
             self.proxy_notice.setText(
-                "适配器已实现：保持 Clash 运行，仅在认证前后关闭并原样恢复 Windows 系统代理；当前为安全模式。"
+                "支持 Windows 系统代理模式：保持代理软件运行，认证前后临时关闭并恢复系统代理。TUN／增强模式需在客户端关闭；不自动切换。"
             )
         else:
             self.proxy_notice.setText("待支持：本轮仅保存选择，不修改代理软件或 Windows 系统代理。")

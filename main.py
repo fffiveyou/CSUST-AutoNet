@@ -29,7 +29,11 @@ def packaged_self_test() -> int:
 
     try:
         from keyring.backends.Windows import WinVaultKeyring
+        from proxy.base import create_proxy_adapter, proxy_catalog
 
+        for key, _label, supported in proxy_catalog():
+            if supported:
+                create_proxy_adapter(key, dry_run=True)
         return 0 if WinVaultKeyring.priority > 0 else 1
     except Exception:
         return 1

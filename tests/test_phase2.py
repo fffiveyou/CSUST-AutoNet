@@ -219,8 +219,9 @@ def test_factory_and_unsupported_boundaries(tmp_path: Path) -> None:
     assert adapter.dry_run is True
     assert create_proxy_adapter("none").is_running() is False
 
-    unsupported = FlClashAdapter()
-    with pytest.raises(ProxyOperationError, match="尚未支持"):
-        unsupported.prepare_for_authentication()
+    supported = create_proxy_adapter("flclash", system_proxy=proxy)
+    assert isinstance(supported, FlClashAdapter)
+    assert supported.system_proxy is proxy
+    assert supported.dry_run is True
     with pytest.raises(ValueError, match="未知代理类型"):
         create_proxy_adapter("not-a-proxy")

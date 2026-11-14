@@ -160,4 +160,7 @@ def create_proxy_adapter(
     import importlib
 
     adapter_class = getattr(importlib.import_module(module_name), class_name)
-    return adapter_class()
+    return adapter_class(
+        exe_path=exe_path, process_service=process_service,
+        dry_run=dry_run, system_proxy=system_proxy,
+    )

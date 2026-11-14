@@ -3,7 +3,7 @@ from pathlib import Path
 
 from PyInstaller.utils.hooks import collect_submodules
 
-hiddenimports = collect_submodules("keyring.backends") + collect_submodules("win32ctypes")
+hiddenimports = collect_submodules("keyring.backends") + collect_submodules("win32ctypes") + collect_submodules("proxy")
 
 a = Analysis(
     ["main.py"],

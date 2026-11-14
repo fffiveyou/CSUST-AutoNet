@@ -23,11 +23,11 @@ KEYRING_SERVICE: Final = "CSUSTAutoNet.CampusNetwork"
 PROXY_OPTIONS: Final[tuple[tuple[str, str, bool], ...]] = (
     ("none", "不处理代理软件", True),
     ("clash_for_windows", "Clash for Windows", True),
-    ("flclash", "FlClash（待支持）", False),
-    ("clash_verge_rev", "Clash Verge Rev（待支持）", False),
-    ("mihomo", "Mihomo 系列（待支持）", False),
-    ("gui_for_singbox", "GUI.for.SingBox（待支持）", False),
-    ("v2rayn", "v2rayN（待支持）", False),
+    ("flclash", "FlClash", True),
+    ("clash_verge_rev", "Clash Verge Rev", True),
+    ("mihomo", "Mihomo / GUI.for.Clash", True),
+    ("gui_for_singbox", "GUI.for.SingBox", True),
+    ("v2rayn", "v2rayN", True),
 )
 PROXY_TYPE_KEYS: Final = frozenset(item[0] for item in PROXY_OPTIONS)
 

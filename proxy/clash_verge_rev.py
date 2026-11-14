@@ -1,9 +1,9 @@
-"""Clash Verge Rev placeholder; intentionally unsupported in Phase 2."""
+"""Clash Verge Rev Windows system-proxy integration; no process or TUN control."""
 
-from proxy.base import UnsupportedProxyAdapter
+from proxy.windows_system import WindowsSystemProxyAdapter
 
 
-class ClashVergeRevAdapter(UnsupportedProxyAdapter):
-    def __init__(self) -> None:
-        super().__init__("Clash Verge Rev")
+class ClashVergeRevAdapter(WindowsSystemProxyAdapter):
+    PROCESS_NAMES = frozenset(["clash-verge.exe"])
+    INSTALL_DIRECTORIES = ["Clash Verge","Clash Verge Rev"]
 

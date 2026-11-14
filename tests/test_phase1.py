@@ -133,8 +133,8 @@ def test_proxy_catalog_marks_phase2_support_truthfully() -> None:
     assert len(items) == 7
     assert items[0] == ("none", "不处理代理软件", True)
     assert items[1] == ("clash_for_windows", "Clash for Windows", True)
-    assert all(not supported for _, _, supported in items[2:])
-    assert all("待支持" in label for _, label, _ in items[2:])
+    assert all(supported for _, _, supported in items[2:])
+    assert all("待支持" not in label for _, label, _ in items[2:])
 
 
 def test_autostart_command_for_packaged_exe() -> None:

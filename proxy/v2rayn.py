@@ -1,9 +1,9 @@
-"""v2rayN placeholder; intentionally unsupported in Phase 2."""
+"""v2rayN Windows system-proxy integration; no process or TUN control."""
 
-from proxy.base import UnsupportedProxyAdapter
+from proxy.windows_system import WindowsSystemProxyAdapter
 
 
-class V2rayNAdapter(UnsupportedProxyAdapter):
-    def __init__(self) -> None:
-        super().__init__("v2rayN")
+class V2rayNAdapter(WindowsSystemProxyAdapter):
+    PROCESS_NAMES = frozenset(["v2rayN.exe"])
+    INSTALL_DIRECTORIES = ["v2rayN"]
 

@@ -2,7 +2,7 @@
 
 > 长沙理工大学（Changsha University of Science and Technology, CSUST）校园网 Windows 自动联网工具，用于掉线后自动重连与认证，以及登录 Windows 后自动联网。
 
-支持使用 Windows 已保存的校园 Wi-Fi 配置（默认 `CSUST-Student`）、后台网络检测、按设置自动认证、系统托盘与 Windows 登录自启动。认证时可临时关闭 Windows 系统代理并恢复原设置，无需退出 Clash。
+支持使用 Windows 已保存的校园 Wi-Fi 配置（默认 `CSUST-Student`）、后台网络检测、按设置自动认证、系统托盘与 Windows 登录自启动。认证时可临时关闭 Windows 系统代理并恢复原设置，无需退出代理客户端。支持 Clash for Windows、FlClash、Clash Verge Rev、Mihomo / GUI.for.Clash、GUI.for.SingBox 和 v2rayN 的 Windows 系统代理模式；不自动控制 TUN／增强模式。新增客户端适配已通过离线测试，尚未逐一实机验收。
 
 首次使用需保存校园 Wi-Fi 配置、填写本人有权使用的校园网账号，并启用自动连接、自动认证及所需的自启动选项。自启动在登录 Windows 后生效。项目非学校官方软件，不能消除校园网络故障或保证始终在线。当前发布为测试版；具体使用步骤、验证状态与限制以 README 和发布说明为准。
 
