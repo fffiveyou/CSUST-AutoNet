@@ -1,0 +1,15 @@
+# CSUST AutoNet
+
+> 长沙理工大学（Changsha University of Science and Technology, CSUST）校园网 Windows 自动联网工具，用于掉线后自动重连与认证，以及登录 Windows 后自动联网。
+
+支持使用 Windows 已保存的校园 Wi-Fi 配置（默认 `CSUST-Student`）、后台网络检测、按设置自动认证、系统托盘与 Windows 登录自启动。认证时可临时关闭 Windows 系统代理并恢复原设置，无需退出 Clash。
+
+首次使用需保存校园 Wi-Fi 配置、填写本人有权使用的校园网账号，并启用自动连接、自动认证及所需的自启动选项。自启动在登录 Windows 后生效。项目非学校官方软件，不能消除校园网络故障或保证始终在线。当前发布为测试版；具体使用步骤、验证状态与限制以 README 和发布说明为准。
+
+## 项目文档与下载
+
+- [README](https://github.com/fffiveyou/CSUST-AutoNet/blob/main/README.md)：功能、首次设置、开发方式及验证限制。
+- [README 纯文本](https://raw.githubusercontent.com/fffiveyou/CSUST-AutoNet/main/README.md)：便于直接读取的 Markdown 文档。
+- [Releases](https://github.com/fffiveyou/CSUST-AutoNet/releases)：Windows 便携测试版、发布说明与校验文件。
+- [源代码](https://github.com/fffiveyou/CSUST-AutoNet)：Python / PySide6 项目。
+- [Issues](https://github.com/fffiveyou/CSUST-AutoNet/issues)：问题反馈；请勿公开账号密码、个人配置、HAR 抓包或含敏感信息的日志。
